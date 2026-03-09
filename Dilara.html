@@ -34,6 +34,10 @@ body{
 
 <script>
 
+let lastCode = null;
+let sameCount = 0;
+const requiredMatches = 3; // antal gånger samma kod måste hittas
+
 Quagga.init({
   inputStream: {
     type: "LiveStream",
@@ -62,14 +66,21 @@ Quagga.onDetected(function(data) {
 
   let code = data.codeResult.code;
 
-  document.getElementById("result").innerHTML =
-    "Scannad kod: <b>" + code + "</b>";
+  if(code === lastCode){
+      sameCount++;
+  } else {
+      sameCount = 0;
+      lastCode = code;
+  }
 
-  // Stoppa kameran
-  Quagga.stop();
+  if(sameCount >= requiredMatches){
 
-  // Ta bort kamerabilden
-  document.getElementById("scanner").innerHTML = "";
+      document.getElementById("result").innerHTML =
+      "Scannad kod: <b>" + code + "</b>";
+
+      Quagga.stop();
+      document.getElementById("scanner").innerHTML = "";
+  }
 
 });
 
