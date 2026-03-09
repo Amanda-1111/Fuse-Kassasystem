@@ -34,86 +34,94 @@ body{
 
 <script>
 
-docReady(function () {
+let lastCode = null;
+let sameCount = 0;
+const requiredMatches = 3;
 
-    const resultContainer = document.getElementById("qr-reader-results");
-
-    let lastResult = null;
-    let lastScanTime = 0;
-
-    // ===== MATERIAL DATABAS =====
-    const materials = {
-        "123456789": {
-            name: "Trä",
-            type: "Byggmaterial",
-            location: "Lager A"
-        },
-        "987654321": {
-            name: "Stål",
-            type: "Metall",
-            location: "Lager B"
-        },
-        "555666777": {
-            name: "Plast",
-            type: "Polymer",
-            location: "Lager C"
-        }
-    };
-
-    // ===== QR / BARCODE SCANNER =====
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader",
-        {
-            fps: 10,
-            qrbox: 250,
-            formatsToSupport: [
-                Html5QrcodeSupportedFormats.EAN_13,
-                Html5QrcodeSupportedFormats.EAN_8,
-                Html5QrcodeSupportedFormats.CODE_128,
-                Html5QrcodeSupportedFormats.UPC_A,
-                Html5QrcodeSupportedFormats.UPC_E
-            ]
-        }
-    );
-
-    function onScanSuccess(decodedText, decodedResult) {
-
-        const now = Date.now();
-
-        // ignorera samma kod inom 2 sekunder
-        if (decodedText === lastResult && now - lastScanTime < 2000) {
-            return;
-        }
-
-        lastResult = decodedText;
-        lastScanTime = now;
-
-        console.log("Scan result:", decodedText);
-
-        // Kontrollera om material finns
-        if (materials[decodedText]) {
-
-            const material = materials[decodedText];
-
-            resultContainer.innerHTML = `
-                <h3>Material hittat</h3>
-                <p><b>Barcode:</b> ${decodedText}</p>
-                <p><b>Namn:</b> ${material.name}</p>
-                <p><b>Typ:</b> ${material.type}</p>
-                <p><b>Plats:</b> ${material.location}</p>
-            `;
-
-        } else {
-
-            resultContainer.innerHTML = `
-                <h3>Okänd kod</h3>
-                <p><b>Barcode:</b> ${decodedText}</p>
-            `;
-
-        }
+// ===== MATERIAL DATABAS =====
+const materials = {
+    "123456789": {
+        name: "Trä",
+        type: "Byggmaterial",
+        location: "Lager A"
+    },
+    "987654321": {
+        name: "Stål",
+        type: "Metall",
+        location: "Lager B"
+    },
+    "555666777": {
+        name: "Plast",
+        type: "Polymer",
+        location: "Lager C"
     }
+};
 
-    html5QrcodeScanner.render(onScanSuccess);
+Quagga.init({
+  inputStream: {
+    type: "LiveStream",
+    target: document.querySelector('#scanner'),
+    constraints: {
+      facingMode: "environment"
+    }
+  },
+  decoder: {
+    readers: [
+      "ean_reader",
+      "ean_8_reader",
+      "code_128_reader",
+      "upc_reader"
+    ]
+  }
+}, function(err) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  Quagga.start();
+});
+
+Quagga.onDetected(function(data) {
+
+  let code = data.codeResult.code;
+
+  if(code === lastCode){
+      sameCount++;
+  } else {
+      sameCount = 0;
+      lastCode = code;
+  }
+
+  if(sameCount >= requiredMatches){
+
+      let resultHTML = "";
+
+      if(materials[code]){
+
+          const material = materials[code];
+
+          resultHTML = `
+          <h3>Material hittat</h3>
+          <p><b>Barcode:</b> ${code}</p>
+          <p><b>Namn:</b> ${material.name}</p>
+          <p><b>Typ:</b> ${material.type}</p>
+          <p><b>Plats:</b> ${material.location}</p>
+          `;
+
+      } else {
+
+          resultHTML = `
+          <h3>Okänd kod</h3>
+          <p>${code}</p>
+          `;
+
+      }
+
+      document.getElementById("result").innerHTML = resultHTML;
+
+      Quagga.stop();
+      document.getElementById("scanner").innerHTML = "";
+  }
 
 });
 
