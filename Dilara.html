@@ -7,9 +7,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 
 <style>
-#scanner {
-  width: 400px;
-  height: 300px;
+body{
+  font-family: Arial;
+  text-align:center;
+}
+
+#scanner{
+  width:400px;
+  margin:auto;
+}
+
+#result{
+  font-size:24px;
+  margin-top:20px;
 }
 </style>
 </head>
@@ -20,9 +30,10 @@
 
 <div id="scanner"></div>
 
-<p>Resultat: <span id="result"></span></p>
+<div id="result">Väntar på scanning...</div>
 
 <script>
+
 Quagga.init({
   inputStream: {
     type: "LiveStream",
@@ -33,9 +44,9 @@ Quagga.init({
   },
   decoder: {
     readers: [
-      "code_128_reader",
       "ean_reader",
       "ean_8_reader",
+      "code_128_reader",
       "upc_reader"
     ]
   }
@@ -48,8 +59,20 @@ Quagga.init({
 });
 
 Quagga.onDetected(function(data) {
-  document.getElementById("result").textContent = data.codeResult.code;
+
+  let code = data.codeResult.code;
+
+  document.getElementById("result").innerHTML =
+    "Scannad kod: <b>" + code + "</b>";
+
+  // Stoppa kameran
+  Quagga.stop();
+
+  // Ta bort kamerabilden
+  document.getElementById("scanner").innerHTML = "";
+
 });
+
 </script>
 
 </body>
