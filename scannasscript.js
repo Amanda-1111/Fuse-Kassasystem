@@ -76,14 +76,7 @@ docReady(function () {
                 <p>${material.name}</p>
             `;
 
-        } else {
-
-            resultContainer.innerHTML = `
-                <h3>Okänd kod</h3>
-                <p>${decodedText}</p>
-                <button onclick="startScanner()">Scanna igen</button>
-            `;
-        }
+        } 
 
     }
 
@@ -91,37 +84,6 @@ docReady(function () {
 
     const cartDiv = document.getElementById("cart");
 
-    let html = "<h3>Varukorg</h3>";
-
-    Object.values(cart).forEach(item => {
-
-        html += `
-        <div class="cart-item">
-
-            <span>${item.name}</span>
-
-            <select onchange="changeQuantity('${item.code}', this.value)">
-                ${createOptions(item.quantity)}
-            </select>
-
-        </div>
-        `;
-    });
-
-    function createOptions(selected) {
-
-    let options = "";
-
-    for (let i = 1; i <= 20; i++) {
-
-        options += `
-        <option value="${i}" ${i == selected ? "selected" : ""}>
-            ${i}
-        </option>`;
-    }
-
-    return options;
-}
 
 window.changeQuantity = function(code, quantity) {
 
