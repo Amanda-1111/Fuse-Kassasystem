@@ -74,7 +74,6 @@ docReady(function () {
             `;
         }
 
-        html5QrcodeScanner.clear();
     }
 
     function onScanError(errorMessage) {
