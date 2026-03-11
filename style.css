@@ -42,8 +42,11 @@ a{
 
 nav{
     display:flex;
-    margin: 40px;;
+    
 }
 
+#scan{
+margin-left: 40px; 
+}
 
 
