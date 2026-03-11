@@ -87,8 +87,6 @@ docReady(function () {
 
     function updateCart() {
     const cartDiv = document.getElementById("cart");
-
-    // Vi vill inte visa varukorgens innehåll, så lämna HTML tom
     cartDiv.innerHTML = ""; 
 }
 
@@ -107,5 +105,4 @@ docReady(function () {
 
         html5QrcodeScanner.render(onScanSuccess, onScanError);
     };
-
 });
