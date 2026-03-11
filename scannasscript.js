@@ -35,10 +35,10 @@ docReady(function () {
   const html5QrCode = new Html5Qrcode("qr-reader");
   Html5Qrcode.getCameras().then(devices => {
 
-    const cameraId = devices[0].id;
+   
 
     html5QrCode.start(
-        cameraId,
+         { facingMode: "environment" },
         {
             fps: 10,
             qrbox: "auto"
