@@ -40,13 +40,14 @@ a{
     color: black;
 }
 
-nav{
-    display:flex;
-    
+nav {
+    display: flex;
+    align-items: center; /* Vertikal centrering */
+    gap: 10px;           /* Avstånd mellan back-knapp och rubrik */
 }
 
-#scan{
-margin-left: 40px; 
+nav h1 {
+    margin: 0;           /* Ta bort standardmarginal */
+    font-size: 1.5rem;   /* Justera storlek på rubrik */
 }
-
 
